@@ -1,0 +1,119 @@
+newman
+
+PharmaFinder API
+
+→ Health check
+  GET http://localhost:5000/api/health [200 OK, 293B, 43ms]
+  ✓  Status is 200
+
+→ Protected endpoint without login is refused
+  GET http://localhost:5000/api/patient/prescriptions [401 UNAUTHORIZED, 328B, 5ms]
+  ✓  Status is 401
+
+→ Log in as doctor
+  POST http://localhost:5000/api/auth/login [200 OK, 522B, 85ms]
+  ✓  Status is 200
+
+→ Doctor: reject prescription with missing dose
+  POST http://localhost:5000/api/doctor/prescriptions [422 UNPROCESSABLE ENTITY, 555B, 21ms]
+  ✓  Status is 422
+
+→ Doctor: create prescription
+  POST http://localhost:5000/api/doctor/prescriptions [201 CREATED, 1.32kB, 14ms]
+  ✓  Status is 201
+  ✓  Code has XXXX-XXXX format
+
+→ Doctor: cannot open pharmacy stock (cross-role)
+  GET http://localhost:5000/api/pharmacy/stock [403 FORBIDDEN, 518B, 14ms]
+  ✓  Status is 403
+
+→ Log out
+  POST http://localhost:5000/api/auth/logout [200 OK, 407B, 4ms]
+  ✓  Status is 200
+
+→ Log in as patient
+  POST http://localhost:5000/api/auth/login [200 OK, 524B, 93ms]
+  ✓  Status is 200
+
+→ Patient: alert for new prescription
+  GET http://localhost:5000/api/notifications [200 OK, 796B, 12ms]
+  ✓  Status is 200
+  ✓  Latest alert mentions the code
+
+→ Patient: list own prescriptions
+  GET http://localhost:5000/api/patient/prescriptions [200 OK, 2.14kB, 14ms]
+  ✓  Status is 200
+  ✓  New prescription is listed
+
+→ Patient: search medicine by name
+  GET http://localhost:5000/api/search/medicine?q=metformin&lat=0.5143&lng=35.2698&sort=distance [200 OK, 3.62kB, 12ms]
+  ✓  Status is 200
+  ✓  Sorted nearest first
+
+→ Patient: pharmacies for prescription
+  GET http://localhost:5000/api/patient/prescriptions/4/pharmacies?lat=0.5143&lng=35.2698 [200 OK, 2.86kB, 11ms]
+  ✓  Status is 200
+  ✓  Full-coverage pharmacies listed first
+
+→ Patient: share prescription with that pharmacy
+  POST http://localhost:5000/api/patient/prescriptions/4/grants [201 CREATED, 639B, 13ms]
+  ✓  Status is 201
+
+→ Log out
+  POST http://localhost:5000/api/auth/logout [200 OK, 407B, 3ms]
+  ✓  Status is 200
+
+→ Log in as the pharmacist of that pharmacy
+  POST http://localhost:5000/api/auth/login [200 OK, 525B, 80ms]
+  ✓  Status is 200
+
+→ Pharmacist: verify code
+  POST http://localhost:5000/api/pharmacy/verify [200 OK, 1.46kB, 19ms]
+  ✓  Status is 200
+  ✓  Can dispense
+
+→ Pharmacist: dispense
+  POST http://localhost:5000/api/pharmacy/dispense [200 OK, 573B, 15ms]
+  ✓  Status is 200
+  ✓  Prescription is filled
+
+→ Pharmacist: dispensing the same code again is refused
+  POST http://localhost:5000/api/pharmacy/dispense [409 CONFLICT, 559B, 11ms]
+  ✓  Status is 409
+
+→ Pharmacist: negative stock is rejected
+  PATCH http://localhost:5000/api/pharmacy/stock/1 [404 NOT FOUND, 502B, 11ms]
+  ✓  Rejected (422 own line / 404 other pharmacy)
+
+→ Log out
+  POST http://localhost:5000/api/auth/logout [200 OK, 407B, 3ms]
+  ✓  Status is 200
+
+→ Log in as admin
+  POST http://localhost:5000/api/auth/login [200 OK, 525B, 77ms]
+  ✓  Status is 200
+
+→ Admin: audit log shows the dispense
+  GET http://localhost:5000/api/admin/audit?action=DISPENSE [200 OK, 770B, 15ms]
+  ✓  Status is 200
+  ✓  DISPENSE entry exists
+
+┌─────────────────────────┬──────────────────┬──────────────────┐
+│                         │         executed │           failed │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              iterations │                1 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│                requests │               22 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│            test-scripts │               22 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│      prerequest-scripts │                1 │                0 │
+├─────────────────────────┼──────────────────┼──────────────────┤
+│              assertions │               30 │                0 │
+├─────────────────────────┴──────────────────┴──────────────────┤
+│ total run duration: 935ms                                     │
+├───────────────────────────────────────────────────────────────┤
+│ total data received: 10.58kB (approx)                         │
+├───────────────────────────────────────────────────────────────┤
+│ average response time: 26ms [min: 3ms, max: 93ms, s.d.: 28ms] │
+└───────────────────────────────────────────────────────────────┘

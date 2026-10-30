@@ -1,0 +1,834 @@
+{
+  "info": {
+    "name": "PharmaFinder API",
+    "description": "End-to-end API checks. Run against a freshly seeded database. Uses cookie sessions (Postman keeps cookies between requests).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "password",
+      "value": "Pharma2026"
+    },
+    {
+      "key": "rxId",
+      "value": ""
+    },
+    {
+      "key": "rxCode",
+      "value": ""
+    },
+    {
+      "key": "pharmacyId",
+      "value": ""
+    },
+    {
+      "key": "pharmacistEmail",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "health"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Protected endpoint without login is refused",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/patient/prescriptions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "patient",
+            "prescriptions"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 401\", () => pm.response.to.have.status(401));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Log in as doctor",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"faith.chebet@demo.pharmafinder.test\",\n  \"password\": \"{{password}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doctor: reject prescription with missing dose",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/doctor/prescriptions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "doctor",
+            "prescriptions"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patient_id\": 1,\n  \"items\": [\n    {\n      \"medicine_id\": 1,\n      \"dose\": \"\",\n      \"frequency\": \"Twice daily\",\n      \"duration_days\": 30,\n      \"quantity\": 60\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 422\", () => pm.response.to.have.status(422));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doctor: create prescription",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/doctor/prescriptions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "doctor",
+            "prescriptions"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patient_id\": 1,\n  \"valid_days\": 30,\n  \"items\": [\n    {\n      \"medicine_id\": 1,\n      \"dose\": \"1 tablet\",\n      \"frequency\": \"Twice daily\",\n      \"duration_days\": 30,\n      \"quantity\": 60\n    },\n    {\n      \"medicine_id\": 9,\n      \"dose\": \"1 tablet\",\n      \"frequency\": \"Once daily\",\n      \"duration_days\": 30,\n      \"quantity\": 30\n    }\n  ]\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 201\", () => pm.response.to.have.status(201));",
+              "const rx = pm.response.json();",
+              "pm.test(\"Code has XXXX-XXXX format\", () => pm.expect(rx.code).to.match(/^[A-Z2-9]{4}-[A-Z2-9]{4}$/));",
+              "pm.collectionVariables.set(\"rxId\", rx.prescription_id);",
+              "pm.collectionVariables.set(\"rxCode\", rx.code);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doctor: cannot open pharmacy stock (cross-role)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/pharmacy/stock",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "pharmacy",
+            "stock"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 403\", () => pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Log out",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Log in as patient",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"aline.chepkoech@demo.pharmafinder.test\",\n  \"password\": \"{{password}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patient: alert for new prescription",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/notifications",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "notifications"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Latest alert mentions the code\", () => pm.expect(pm.response.json()[0].body).to.include(pm.collectionVariables.get(\"rxCode\")));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patient: list own prescriptions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/patient/prescriptions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "patient",
+            "prescriptions"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"New prescription is listed\", () => pm.expect(pm.response.json().map(p => p.code)).to.include(pm.collectionVariables.get(\"rxCode\")));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patient: search medicine by name",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/search/medicine?q=metformin&lat=0.5143&lng=35.2698&sort=distance",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "search",
+            "medicine"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "metformin"
+            },
+            {
+              "key": "lat",
+              "value": "0.5143"
+            },
+            {
+              "key": "lng",
+              "value": "35.2698"
+            },
+            {
+              "key": "sort",
+              "value": "distance"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "const r = pm.response.json().results;",
+              "pm.test(\"Sorted nearest first\", () => { for (let i=1;i<r.length;i++) pm.expect(r[i].distance_km).to.be.at.least(r[i-1].distance_km); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patient: pharmacies for prescription",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/patient/prescriptions/{{rxId}}/pharmacies?lat=0.5143&lng=35.2698",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "patient",
+            "prescriptions",
+            "{{rxId}}",
+            "pharmacies"
+          ],
+          "query": [
+            {
+              "key": "lat",
+              "value": "0.5143"
+            },
+            {
+              "key": "lng",
+              "value": "35.2698"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "const r = pm.response.json().results;",
+              "const best = r.find(p => p.can_fill_all);",
+              "pm.collectionVariables.set(\"pharmacyId\", best ? best.pharmacy_id : r[0].pharmacy_id);",
+              "pm.test(\"Full-coverage pharmacies listed first\", () => { const i = r.findIndex(p => !p.can_fill_all); if (i>=0) pm.expect(r.slice(i).every(p => !p.can_fill_all)).to.be.true; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patient: share prescription with that pharmacy",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/patient/prescriptions/{{rxId}}/grants",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "patient",
+            "prescriptions",
+            "{{rxId}}",
+            "grants"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"pharmacy_id\": \"{{pharmacyId}}\",\n  \"hours\": 24\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 201\", () => pm.response.to.have.status(201));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Log out",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Log in as the pharmacist of that pharmacy",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{pharmacistEmail}}\",\n  \"password\": \"{{password}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const emails = {1:\"grace.jebet\",2:\"peter.kibet\",3:\"lucy.achieng\",4:\"daniel.rotich\"};",
+              "pm.collectionVariables.set(\"pharmacistEmail\", emails[pm.collectionVariables.get(\"pharmacyId\")] + \"@demo.pharmafinder.test\");"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pharmacist: verify code",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/pharmacy/verify",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "pharmacy",
+            "verify"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"{{rxCode}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Can dispense\", () => pm.expect(pm.response.json().can_dispense).to.be.true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pharmacist: dispense",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/pharmacy/dispense",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "pharmacy",
+            "dispense"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"{{rxCode}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"Prescription is filled\", () => pm.expect(pm.response.json().status).to.eql(\"filled\"));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pharmacist: dispensing the same code again is refused",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/pharmacy/dispense",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "pharmacy",
+            "dispense"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"{{rxCode}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 409\", () => pm.response.to.have.status(409));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pharmacist: negative stock is rejected",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/pharmacy/stock/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "pharmacy",
+            "stock",
+            "1"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quantity\": -5\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Rejected (422 own line / 404 other pharmacy)\", () => pm.expect(pm.response.code).to.be.oneOf([422,404]));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Log out",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Log in as admin",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@demo.pharmafinder.test\",\n  \"password\": \"{{password}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin: audit log shows the dispense",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/admin/audit?action=DISPENSE",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "admin",
+            "audit"
+          ],
+          "query": [
+            {
+              "key": "action",
+              "value": "DISPENSE"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+              "pm.test(\"DISPENSE entry exists\", () => pm.expect(pm.response.json().entries.length).to.be.above(0));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

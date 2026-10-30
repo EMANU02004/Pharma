@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PharmaFinder - Log in</title>
+  <link href="/vendor/fonts.css" rel="stylesheet">
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/app.css" rel="stylesheet">
+</head>
+<body>
+<main class="pf-auth">
+  <section class="pf-auth-art">
+    <a class="pf-brand" href="/">
+      <svg class="pf-cross" viewBox="0 0 28 28" aria-hidden="true"><rect x="10" y="2" width="8" height="24" rx="2" fill="#fff"/><rect x="2" y="10" width="24" height="8" rx="2" fill="#fff"/></svg>
+      PharmaFinder
+    </a>
+    <div>
+      <h1>Your prescription, and where to fill it.</h1>
+      <p>Doctors issue clear digital prescriptions. You see which pharmacies near you have every medicine in stock, at what price, before you travel.</p>
+    </div>
+    <div class="pf-auth-slip" aria-hidden="true">
+      <div class="d-flex align-items-baseline"><span class="rx-mark">Rx</span><span class="rx-code">PF7K-AAA2</span></div>
+      <div class="rx-meta mt-1">Metformin 500 mg, twice daily, 30 days</div>
+      <div class="rx-meta">In stock at 3 pharmacies within 4 km</div>
+    </div>
+  </section>
+
+  <section class="pf-auth-form">
+    <div>
+      <span class="pf-demo">Demo build with synthetic data for Uasin Gishu County</span>
+      <ul class="nav nav-underline mb-4" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#login-pane" type="button" role="tab">Log in</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#register-pane" type="button" role="tab">Create patient account</button></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="login-pane" role="tabpanel">
+          <form id="login-form" novalidate>
+            <div class="mb-3"><label class="form-label" for="l-email">Email</label>
+              <input class="form-control" id="l-email" name="email" type="email" autocomplete="username" required></div>
+            <div class="mb-3"><label class="form-label" for="l-pass">Password</label>
+              <input class="form-control" id="l-pass" name="password" type="password" autocomplete="current-password" required></div>
+            <div class="text-danger small mb-2" id="login-error" role="alert"></div>
+            <button class="btn btn-primary w-100" type="submit">Log in</button>
+          </form>
+          <details class="mt-4 small text-muted">
+            <summary>Demo accounts</summary>
+            <p class="mt-2 mb-1">Password for all: <code>Pharma2026</code></p>
+            <ul class="mb-0">
+              <li>Patient: aline.chepkoech@demo.pharmafinder.test</li>
+              <li>Doctor: faith.chebet@demo.pharmafinder.test</li>
+              <li>Pharmacist: grace.jebet@demo.pharmafinder.test</li>
+              <li>Admin: admin@demo.pharmafinder.test</li>
+            </ul>
+          </details>
+        </div>
+        <div class="tab-pane fade" id="register-pane" role="tabpanel">
+          <p class="text-muted small">Doctor and pharmacist accounts are created by the administrator.</p>
+          <form id="register-form" novalidate>
+            <div class="mb-3"><label class="form-label" for="r-name">Full name</label>
+              <input class="form-control" id="r-name" name="full_name" required></div>
+            <div class="mb-3"><label class="form-label" for="r-email">Email</label>
+              <input class="form-control" id="r-email" name="email" type="email" required></div>
+            <div class="row g-2 mb-3">
+              <div class="col-6"><label class="form-label" for="r-phone">Phone</label>
+                <input class="form-control" id="r-phone" name="phone" placeholder="0712345678"></div>
+              <div class="col-6"><label class="form-label" for="r-dob">Date of birth</label>
+                <input class="form-control" id="r-dob" name="date_of_birth" type="date"></div>
+            </div>
+            <div class="mb-3"><label class="form-label" for="r-sub">Sub-county</label>
+              <select class="form-select" id="r-sub" name="sub_county">
+                <option value="">Choose…</option><option>Ainabkoi</option><option>Kapseret</option><option>Kesses</option>
+                <option>Moiben</option><option>Soy</option><option>Turbo</option></select></div>
+            <div class="mb-3"><label class="form-label" for="r-pass">Password</label>
+              <input class="form-control" id="r-pass" name="password" type="password" autocomplete="new-password" required>
+              <div class="form-text">At least 8 characters, with letters and numbers.</div></div>
+            <div class="text-danger small mb-2" id="register-error" role="alert"></div>
+            <button class="btn btn-primary w-100" type="submit">Create account</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script>
+  const go = (role) => { window.location.href = `/${role}.html`; };
+  PF.api("/api/auth/me").then((me) => go(me.role)).catch(() => {});
+
+  document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target, out = document.getElementById("login-error");
+    out.textContent = "";
+    try {
+      const r = await PF.api("/api/auth/login", { method: "POST", body: { email: f.email.value, password: f.password.value } });
+      go(r.role);
+    } catch (err) { out.textContent = err.message; }
+  });
+
+  document.getElementById("register-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target, out = document.getElementById("register-error");
+    out.textContent = "";
+    const body = Object.fromEntries(new FormData(f).entries());
+    try {
+      await PF.api("/api/auth/register", { method: "POST", body });
+      go("patient");
+    } catch (err) { out.textContent = err.message; PF.formErrors(f, err); }
+  });
+</script>
+</body>
+</html>
