@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin - PharmaFinder</title>
+  <link href="/vendor/fonts.css" rel="stylesheet">
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/app.css" rel="stylesheet">
+</head>
+<body>
+<div class="pf-shell">
+  <aside class="pf-rail">
+    <a class="pf-brand" href="/admin.html">
+      <svg class="pf-cross" viewBox="0 0 28 28" aria-hidden="true"><rect x="10" y="2" width="8" height="24" rx="2" fill="#fff"/><rect x="2" y="10" width="24" height="8" rx="2" fill="#fff"/></svg>
+      PharmaFinder</a>
+    <nav aria-label="Admin">
+      <a href="#overview" data-section="overview">Overview</a>
+      <a href="#users" data-section="users">Users</a>
+      <a href="#staff" data-section="staff">Add staff</a>
+      <a href="#pharmacies" data-section="pharmacies">Pharmacies</a>
+      <a href="#audit" data-section="audit">Audit log</a>
+    </nav>
+    <div class="pf-who"><strong id="who-name"></strong><span id="who-sub"></span>
+      <button id="logout" class="btn btn-sm btn-outline-light mt-2">Log out</button></div>
+  </aside>
+
+  <main class="pf-main">
+    <span class="pf-demo">Demo data: all accounts are fictional</span>
+
+    <section id="overview" class="pf-section">
+      <h1>Overview</h1>
+      <div class="row g-2" id="stats"></div>
+    </section>
+
+    <section id="users" class="pf-section">
+      <h1>Users</h1>
+      <div class="pf-panel">
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <input class="form-control" id="user-q" placeholder="Search name or email" style="max-width:18rem" aria-label="Search users">
+          <select class="form-select" id="user-role" style="max-width:12rem" aria-label="Role"><option value="">All roles</option>
+            <option value="patient">Patients</option><option value="doctor">Doctors</option><option value="pharmacist">Pharmacists</option><option value="admin">Admins</option></select>
+        </div>
+        <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Name</th><th>Role</th><th>Details</th><th>Status</th><th></th></tr></thead>
+          <tbody id="user-rows"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="staff" class="pf-section">
+      <h1>Add staff</h1>
+      <p class="text-muted">Doctors and pharmacists cannot sign up themselves. Create their accounts here and share the password with them securely.</p>
+      <div class="row g-3">
+        <div class="col-lg-6"><form class="pf-panel" id="doctor-form">
+          <h2 class="h5">Doctor</h2>
+          <div class="mb-2"><label class="form-label" for="d-name">Full name</label><input class="form-control" id="d-name" name="full_name" required></div>
+          <div class="mb-2"><label class="form-label" for="d-email">Email</label><input class="form-control" id="d-email" name="email" type="email" required></div>
+          <div class="mb-2"><label class="form-label" for="d-phone">Phone</label><input class="form-control" id="d-phone" name="phone"></div>
+          <div class="mb-2"><label class="form-label" for="d-lic">Licence number</label><input class="form-control" id="d-lic" name="license_number" required></div>
+          <div class="mb-2"><label class="form-label" for="d-spec">Speciality</label><input class="form-control" id="d-spec" name="speciality"></div>
+          <div class="mb-2"><label class="form-label" for="d-fac">Facility</label><input class="form-control" id="d-fac" name="facility"></div>
+          <div class="mb-3"><label class="form-label" for="d-pass">Temporary password</label><input class="form-control" id="d-pass" name="password" type="password" required></div>
+          <button class="btn btn-primary">Create doctor account</button>
+        </form></div>
+        <div class="col-lg-6"><form class="pf-panel" id="pharmacist-form">
+          <h2 class="h5">Pharmacist</h2>
+          <div class="mb-2"><label class="form-label" for="p-name">Full name</label><input class="form-control" id="p-name" name="full_name" required></div>
+          <div class="mb-2"><label class="form-label" for="p-email">Email</label><input class="form-control" id="p-email" name="email" type="email" required></div>
+          <div class="mb-2"><label class="form-label" for="p-phone">Phone</label><input class="form-control" id="p-phone" name="phone"></div>
+          <div class="mb-2"><label class="form-label" for="p-lic">Licence number</label><input class="form-control" id="p-lic" name="license_number" required></div>
+          <div class="mb-2"><label class="form-label" for="p-pharm">Pharmacy</label><select class="form-select" id="p-pharm" name="pharmacy_id" required></select></div>
+          <div class="mb-3"><label class="form-label" for="p-pass">Temporary password</label><input class="form-control" id="p-pass" name="password" type="password" required></div>
+          <button class="btn btn-primary">Create pharmacist account</button>
+        </form></div>
+      </div>
+    </section>
+
+    <section id="pharmacies" class="pf-section">
+      <h1>Pharmacies</h1>
+      <div class="pf-panel"><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Name</th><th>Licence</th><th>Hours</th><th>Location</th><th>Staff</th><th>Stock lines</th></tr></thead>
+        <tbody id="pharmacy-rows"></tbody></table></div></div>
+      <form class="pf-panel row g-2" id="pharmacy-form">
+        <h2 class="h5">Add a pharmacy</h2>
+        <div class="col-md-4"><label class="form-label" for="ph-name">Name</label><input class="form-control" id="ph-name" name="name" required></div>
+        <div class="col-md-3"><label class="form-label" for="ph-lic">Licence number</label><input class="form-control" id="ph-lic" name="license_number" required></div>
+        <div class="col-md-5"><label class="form-label" for="ph-addr">Address</label><input class="form-control" id="ph-addr" name="address" required></div>
+        <div class="col-md-2"><label class="form-label" for="ph-lat">Latitude</label><input class="form-control" id="ph-lat" name="latitude" type="number" step="0.000001" required></div>
+        <div class="col-md-2"><label class="form-label" for="ph-lng">Longitude</label><input class="form-control" id="ph-lng" name="longitude" type="number" step="0.000001" required></div>
+        <div class="col-md-3"><label class="form-label" for="ph-days">Open days</label><input class="form-control" id="ph-days" name="open_days" value="Mon-Sat"></div>
+        <div class="col-md-2"><label class="form-label" for="ph-open">Opens</label><input class="form-control" id="ph-open" name="opens_at" type="time" value="08:00"></div>
+        <div class="col-md-2"><label class="form-label" for="ph-close">Closes</label><input class="form-control" id="ph-close" name="closes_at" type="time" value="20:00"></div>
+        <div class="col-12"><button class="btn btn-primary">Add pharmacy</button></div>
+      </form>
+    </section>
+
+    <section id="audit" class="pf-section">
+      <h1>Audit log</h1>
+      <div class="pf-panel">
+        <select class="form-select mb-3" id="audit-action" style="max-width:16rem" aria-label="Filter by action"><option value="">All actions</option></select>
+        <div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>When</th><th>User</th><th>Action</th><th>Target</th><th>Details</th></tr></thead>
+          <tbody id="audit-rows"></tbody></table></div>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>

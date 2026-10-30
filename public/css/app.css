@@ -1,0 +1,118 @@
+/* PharmaFinder - shared styles. Bootstrap 5 provides the grid and components;
+   these tokens give it the pharmacy-counter identity. */
+:root {
+  --pf-green: #0f5a4a;
+  --pf-green-dark: #0a4236;
+  --pf-green-soft: #e3efeb;
+  --pf-paper: #fafbf8;
+  --pf-ink: #1c2a27;
+  --pf-muted: #5c6b67;
+  --pf-line: #d6ded9;
+  --pf-amber: #b26b00;
+  --pf-amber-soft: #fbefd9;
+  --pf-red: #b3261e;
+  --pf-red-soft: #fbe4e2;
+  --bs-body-font-family: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --bs-body-color: var(--pf-ink);
+  --bs-body-bg: var(--pf-paper);
+  --bs-primary: var(--pf-green);
+  --bs-primary-rgb: 15, 90, 74;
+  --bs-link-color: var(--pf-green);
+  --bs-link-hover-color: var(--pf-green-dark);
+  --bs-border-color: var(--pf-line);
+}
+
+body { font-size: 1rem; line-height: 1.55; }
+h1, h2, h3 { font-weight: 700; letter-spacing: -0.01em; }
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.05rem; }
+.text-muted { color: var(--pf-muted) !important; }
+
+.btn-primary { --bs-btn-bg: var(--pf-green); --bs-btn-border-color: var(--pf-green);
+  --bs-btn-hover-bg: var(--pf-green-dark); --bs-btn-hover-border-color: var(--pf-green-dark);
+  --bs-btn-active-bg: var(--pf-green-dark); --bs-btn-disabled-bg: #7aa69b; --bs-btn-disabled-border-color: #7aa69b; }
+.btn-outline-primary { --bs-btn-color: var(--pf-green); --bs-btn-border-color: var(--pf-green);
+  --bs-btn-hover-bg: var(--pf-green); --bs-btn-hover-border-color: var(--pf-green); --bs-btn-active-bg: var(--pf-green-dark); }
+:focus-visible { outline: 3px solid #e8a33d; outline-offset: 2px; }
+.form-control:focus, .form-select:focus { border-color: var(--pf-green); box-shadow: 0 0 0 .2rem rgba(15,90,74,.18); }
+
+/* App shell: a green rail with the pharmacy cross, content on paper */
+.pf-shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.pf-rail { background: var(--pf-green); color: #fff; padding: 1.25rem 1rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.pf-brand { display: flex; align-items: center; gap: .6rem; font-weight: 800; font-size: 1.15rem; color: #fff; text-decoration: none; }
+.pf-cross { width: 28px; height: 28px; flex: none; }
+.pf-rail nav a { display: block; color: #d6ebe5; text-decoration: none; padding: .55rem .75rem; border-radius: 6px; }
+.pf-rail nav a:hover { background: rgba(255,255,255,.08); color: #fff; }
+.pf-rail nav a.active { background: #fff; color: var(--pf-green); font-weight: 600; }
+.pf-who { margin-top: auto; font-size: .875rem; color: #d6ebe5; overflow-wrap: anywhere; }
+.pf-who strong { color: #fff; display: block; }
+.pf-who button { color: #fff; border-color: rgba(255,255,255,.5); }
+.pf-main { padding: 2rem clamp(1rem, 3vw, 2.5rem); max-width: 1200px; width: 100%; }
+.pf-demo { background: var(--pf-amber-soft); color: #6b4300; border-radius: 6px; padding: .4rem .75rem; font-size: .85rem; display: inline-block; margin-bottom: 1rem; }
+
+@media (max-width: 860px) {
+  .pf-shell { grid-template-columns: 1fr; }
+  .pf-rail { flex-direction: row; flex-wrap: wrap; align-items: center; padding: .75rem 1rem; gap: .75rem; }
+  .pf-rail nav { display: flex; flex-wrap: wrap; gap: .25rem; order: 3; width: 100%; }
+  .pf-who { margin: 0 0 0 auto; text-align: right; }
+  .pf-who strong { display: inline; }
+  .pf-who span { display: none; }
+  .pf-who button { margin: 0 0 0 .5rem !important; }
+  .rx-head > .text-end { text-align: left !important; }
+}
+
+/* Panels: flat paper sheets with a hairline - hierarchy comes from headings, not shadows */
+.pf-panel { background: #fff; border: 1px solid var(--pf-line); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.25rem; }
+.pf-panel > h2:first-child, .pf-panel > h3:first-child { margin-top: 0; }
+.pf-section { display: none; }
+.pf-section.active { display: block; }
+
+/* The prescription slip - the signature element */
+.rx-slip { background: #fff; border: 1px solid var(--pf-line); border-left: 6px solid var(--pf-green);
+  border-radius: 4px 8px 8px 4px; padding: 1.1rem 1.25rem; margin-bottom: 1rem; position: relative; }
+.rx-slip.is-filled { border-left-color: #6c7a76; }
+.rx-slip.is-expired, .rx-slip.is-cancelled { border-left-color: var(--pf-red); opacity: .85; }
+.rx-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; align-items: flex-start; }
+.rx-mark { font-family: Georgia, serif; font-style: italic; font-size: 1.6rem; color: var(--pf-green); line-height: 1; margin-right: .5rem; }
+.rx-code { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 1.6rem; font-weight: 700; letter-spacing: .08em; color: var(--pf-ink); }
+.rx-code-lg { font-size: clamp(2rem, 6vw, 3rem); }
+.rx-meta { color: var(--pf-muted); font-size: .9rem; }
+.rx-items { margin: .9rem 0 .25rem; padding: 0; list-style: none; border-top: 1px dashed var(--pf-line); }
+.rx-items li { padding: .55rem 0; border-bottom: 1px dashed var(--pf-line); display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.rx-items .dose { color: var(--pf-muted); font-size: .92rem; }
+
+.status { display: inline-block; padding: .15rem .6rem; border-radius: 999px; font-size: .8rem; font-weight: 600; }
+.status-active { background: var(--pf-green-soft); color: var(--pf-green); }
+.status-filled { background: #e9ecea; color: #44514d; }
+.status-expired, .status-cancelled, .status-revoked { background: var(--pf-red-soft); color: var(--pf-red); }
+.stock-ok { color: var(--pf-green); font-weight: 600; }
+.stock-low { color: var(--pf-amber); font-weight: 600; }
+.stock-out { color: var(--pf-red); font-weight: 600; }
+.row-low { background: var(--pf-amber-soft); }
+.row-out { background: var(--pf-red-soft); }
+
+/* Map */
+.pf-map { height: 420px; border-radius: 8px; border: 1px solid var(--pf-line); }
+.pf-result { border-bottom: 1px solid var(--pf-line); padding: .75rem 0; display: flex; justify-content: space-between; gap: 1rem; }
+.pf-result:last-child { border-bottom: 0; }
+.pf-result.is-best { background: var(--pf-green-soft); margin: 0 -.75rem; padding: .75rem; border-radius: 6px; }
+
+/* Login page */
+.pf-auth { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.pf-auth-art { background: var(--pf-green); color: #fff; padding: clamp(2rem, 5vw, 4rem); display: flex; flex-direction: column; justify-content: space-between; }
+.pf-auth-art h1 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; max-width: 14ch; margin: 2rem 0 1rem; }
+.pf-auth-art p { color: #d6ebe5; max-width: 42ch; font-size: 1.05rem; }
+.pf-auth-slip { background: #fff; color: var(--pf-ink); border-radius: 6px; padding: 1rem 1.25rem; max-width: 340px; transform: rotate(-2deg); }
+.pf-auth-form { padding: clamp(2rem, 5vw, 4rem); display: flex; align-items: center; }
+.pf-auth-form > div { width: 100%; max-width: 420px; }
+@media (max-width: 860px) { .pf-auth { grid-template-columns: 1fr; } .pf-auth-slip { display: none; } }
+
+.pf-toast { position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 2000; max-width: 380px; }
+.table { --bs-table-bg: transparent; }
+.table > :not(caption) > * > * { padding: .55rem .6rem; }
+.pf-empty { color: var(--pf-muted); padding: 1.5rem 0; }
+.pf-stat { border: 1px solid var(--pf-line); border-radius: 8px; padding: .9rem 1rem; background: #fff; }
+.pf-stat b { display: block; font-size: 1.6rem; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

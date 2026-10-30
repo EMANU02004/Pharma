@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doctor - PharmaFinder</title>
+  <link href="/vendor/fonts.css" rel="stylesheet">
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/app.css" rel="stylesheet">
+</head>
+<body>
+<div class="pf-shell">
+  <aside class="pf-rail">
+    <a class="pf-brand" href="/doctor.html">
+      <svg class="pf-cross" viewBox="0 0 28 28" aria-hidden="true"><rect x="10" y="2" width="8" height="24" rx="2" fill="#fff"/><rect x="2" y="10" width="24" height="8" rx="2" fill="#fff"/></svg>
+      PharmaFinder</a>
+    <nav aria-label="Doctor">
+      <a href="#new" data-section="new">New prescription</a>
+      <a href="#issued" data-section="issued">Issued prescriptions</a>
+    </nav>
+    <div class="pf-who"><strong id="who-name"></strong><span id="who-sub"></span>
+      <button id="logout" class="btn btn-sm btn-outline-light mt-2">Log out</button></div>
+  </aside>
+
+  <main class="pf-main">
+    <span class="pf-demo">Demo data: patients and medicines are fictional</span>
+
+    <section id="new" class="pf-section">
+      <h1>New prescription</h1>
+      <form id="rx-form" novalidate>
+        <div class="pf-panel">
+          <h2>Patient</h2>
+          <div class="row g-2 align-items-end">
+            <div class="col-md-6"><label class="form-label" for="patient-q">Search by name or email</label>
+              <input class="form-control" id="patient-q" placeholder="e.g. Aline" autocomplete="off"></div>
+            <div class="col-md-6"><label class="form-label" for="patient-id">Select patient</label>
+              <select class="form-select" id="patient-id" name="patient_id" required><option value="">Search first</option></select></div>
+          </div>
+        </div>
+
+        <div class="pf-panel">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="mb-0">Medicines</h2>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="add-item">Add medicine</button>
+          </div>
+          <datalist id="medicine-options"></datalist>
+          <div id="items"></div>
+        </div>
+
+        <div class="pf-panel">
+          <div class="row g-2">
+            <div class="col-md-3"><label class="form-label" for="valid-days">Valid for</label>
+              <select class="form-select" id="valid-days" name="valid_days"><option value="7">7 days</option>
+                <option value="14">14 days</option><option value="30" selected>30 days</option><option value="90">90 days</option></select></div>
+            <div class="col-md-9"><label class="form-label" for="notes">Note for the pharmacist (optional)</label>
+              <input class="form-control" id="notes" name="notes" maxlength="500"></div>
+          </div>
+        </div>
+        <div class="text-danger mb-2" id="rx-error" role="alert"></div>
+        <button class="btn btn-primary btn-lg">Issue prescription</button>
+      </form>
+      <div id="issued-result" class="mt-4"></div>
+    </section>
+
+    <section id="issued" class="pf-section">
+      <h1>Issued prescriptions</h1>
+      <div id="issued-list"><p class="pf-empty">Loading…</p></div>
+    </section>
+  </main>
+</div>
+
+<template id="item-row">
+  <div class="row g-2 align-items-end border-bottom pb-3 mb-3 rx-item">
+    <div class="col-md-4"><label class="form-label">Medicine</label>
+      <input class="form-control med-input" list="medicine-options" placeholder="Type to search" required>
+      <input type="hidden" class="med-id"></div>
+    <div class="col-md-2"><label class="form-label">Dose</label><input class="form-control dose" placeholder="1 tablet" required></div>
+    <div class="col-md-2"><label class="form-label">Frequency</label>
+      <input class="form-control frequency" list="freq-options" placeholder="Twice daily" required></div>
+    <div class="col-md-1"><label class="form-label">Days</label><input class="form-control duration" type="number" min="1" max="365" required></div>
+    <div class="col-md-2"><label class="form-label">Quantity</label><input class="form-control quantity" type="number" min="1" max="1000" required></div>
+    <div class="col-md-1"><button type="button" class="btn btn-outline-danger w-100 remove" aria-label="Remove medicine">&times;</button></div>
+  </div>
+</template>
+<datalist id="freq-options"><option>Once daily</option><option>Twice daily</option><option>3 times daily</option>
+  <option>Every 8 hours</option><option>At night</option><option>As needed</option></datalist>
+
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/doctor.js"></script>
+</body>
+</html>

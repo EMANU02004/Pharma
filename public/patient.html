@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Health Passport - PharmaFinder</title>
+  <link href="/vendor/fonts.css" rel="stylesheet">
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="/vendor/leaflet/leaflet.css" rel="stylesheet">
+  <link href="/css/app.css" rel="stylesheet">
+</head>
+<body>
+<div class="pf-shell">
+  <aside class="pf-rail">
+    <a class="pf-brand" href="/patient.html">
+      <svg class="pf-cross" viewBox="0 0 28 28" aria-hidden="true"><rect x="10" y="2" width="8" height="24" rx="2" fill="#fff"/><rect x="2" y="10" width="24" height="8" rx="2" fill="#fff"/></svg>
+      PharmaFinder</a>
+    <nav aria-label="Patient">
+      <a href="#passport" data-section="passport">My prescriptions</a>
+      <a href="#find" data-section="find">Find medicine</a>
+      <a href="#alerts" data-section="alerts">Alerts <span id="alert-count" class="badge rounded-pill text-bg-light ms-1"></span></a>
+      <a href="#profile" data-section="profile">My details</a>
+    </nav>
+    <div class="pf-who"><strong id="who-name"></strong><span id="who-sub"></span>
+      <button id="logout" class="btn btn-sm btn-outline-light mt-2">Log out</button></div>
+  </aside>
+
+  <main class="pf-main">
+    <span class="pf-demo">Demo data: pharmacies, stock and people are fictional</span>
+
+    <section id="passport" class="pf-section">
+      <h1>My prescriptions</h1>
+      <p class="text-muted">Show the code at the pharmacy after you share the prescription with it. Each prescription can be filled once.</p>
+      <div id="rx-list"><p class="pf-empty">Loading…</p></div>
+    </section>
+
+    <section id="find" class="pf-section">
+      <h1>Find medicine</h1>
+      <div class="pf-panel">
+        <ul class="nav nav-underline mb-3" role="tablist">
+          <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#by-name" type="button">By medicine name</button></li>
+          <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#by-rx" type="button">By my prescription</button></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="by-name"><form id="search-form" class="row g-2 align-items-end">
+            <div class="col-md-4"><label class="form-label" for="q">Medicine</label>
+              <input class="form-control" id="q" name="q" placeholder="e.g. metformin or Panadol" required minlength="2"></div>
+            <div class="col-md-3"><label class="form-label" for="sort">Sort by</label>
+              <select class="form-select" id="sort" name="sort"><option value="distance">Nearest first</option>
+                <option value="price">Lowest price</option><option value="stock">Most stock</option></select></div>
+            <div class="col-md-2"><label class="form-label" for="max_km">Within</label>
+              <select class="form-select" id="max_km" name="max_km"><option value="">Any distance</option>
+                <option value="2">2 km</option><option value="5">5 km</option><option value="10">10 km</option></select></div>
+            <div class="col-md-2 form-check ms-2 mb-2"><input class="form-check-input" type="checkbox" id="open_now" name="open_now">
+              <label class="form-check-label" for="open_now">Open now</label></div>
+            <div class="col-md-12"><button class="btn btn-primary">Search pharmacies</button>
+              <span class="text-muted small ms-2" id="loc-label"></span></div>
+          </form></div>
+          <div class="tab-pane fade" id="by-rx"><form id="rx-search-form" class="row g-2 align-items-end">
+            <div class="col-md-6"><label class="form-label" for="rx-pick">Active prescription</label>
+              <select class="form-select" id="rx-pick" required></select></div>
+            <div class="col-md-3"><button class="btn btn-primary">Find pharmacies</button></div>
+          </form></div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-7"><div id="map" class="pf-map" role="region" aria-label="Map of pharmacies"></div></div>
+        <div class="col-lg-5"><div class="pf-panel" id="results"><p class="pf-empty mb-0">Search for a medicine to see which pharmacies have it.</p></div></div>
+      </div>
+    </section>
+
+    <section id="alerts" class="pf-section">
+      <h1>Alerts</h1>
+      <p class="text-muted">Alerts are shown here. Email copies are only sent when the server has email configured; otherwise they are marked "simulated".</p>
+      <div id="alert-list" class="pf-panel"></div>
+    </section>
+
+    <section id="profile" class="pf-section">
+      <h1>My details</h1>
+      <div class="pf-panel" id="profile-box"></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal fade" id="share-modal" tabindex="-1" aria-labelledby="share-title" aria-hidden="true">
+  <div class="modal-dialog"><form class="modal-content" id="share-form">
+    <div class="modal-header"><h2 class="modal-title h5" id="share-title">Share with a pharmacy</h2>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+    <div class="modal-body">
+      <p class="text-muted small">Only the pharmacy you choose can open this prescription, and only until access ends. You can revoke it at any time.</p>
+      <input type="hidden" name="rx_id">
+      <label class="form-label" for="share-pharmacy">Pharmacy</label>
+      <select class="form-select mb-3" id="share-pharmacy" name="pharmacy_id" required></select>
+      <label class="form-label" for="share-hours">Access lasts</label>
+      <select class="form-select" id="share-hours" name="hours"><option value="4">4 hours</option>
+        <option value="24" selected>24 hours</option><option value="72">3 days</option></select>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+      <button class="btn btn-primary">Share prescription</button></div>
+  </form></div>
+</div>
+
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+<script src="/vendor/leaflet/leaflet.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/patient.js"></script>
+</body>
+</html>

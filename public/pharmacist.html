@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pharmacy - PharmaFinder</title>
+  <link href="/vendor/fonts.css" rel="stylesheet">
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/app.css" rel="stylesheet">
+</head>
+<body>
+<div class="pf-shell">
+  <aside class="pf-rail">
+    <a class="pf-brand" href="/pharmacist.html">
+      <svg class="pf-cross" viewBox="0 0 28 28" aria-hidden="true"><rect x="10" y="2" width="8" height="24" rx="2" fill="#fff"/><rect x="2" y="10" width="24" height="8" rx="2" fill="#fff"/></svg>
+      PharmaFinder</a>
+    <nav aria-label="Pharmacy">
+      <a href="#counter" data-section="counter">Check a code</a>
+      <a href="#shared" data-section="shared">Shared with us</a>
+      <a href="#stock" data-section="stock">Stock</a>
+      <a href="#history" data-section="history">Dispensed</a>
+    </nav>
+    <div class="pf-who"><strong id="who-name"></strong><span id="who-sub"></span>
+      <button id="logout" class="btn btn-sm btn-outline-light mt-2">Log out</button></div>
+  </aside>
+
+  <main class="pf-main">
+    <span class="pf-demo">Demo data: stock and prices are fictional</span>
+
+    <section id="counter" class="pf-section">
+      <h1>Check a prescription code</h1>
+      <p class="text-muted">The patient must share the prescription with your pharmacy first. Codes can be filled once.</p>
+      <form id="code-form" class="pf-panel d-flex flex-wrap gap-2 align-items-end">
+        <div><label class="form-label" for="code">Prescription code</label>
+          <input class="form-control rx-code" id="code" name="code" placeholder="XXXX-XXXX" maxlength="12" autocomplete="off" required style="font-size:1.3rem;max-width:16rem"></div>
+        <button class="btn btn-primary btn-lg">Check code</button>
+      </form>
+      <div id="verify-result"></div>
+    </section>
+
+    <section id="shared" class="pf-section">
+      <h1>Shared with us</h1>
+      <p class="text-muted">Prescriptions patients have shared with your pharmacy, while their access window is open.</p>
+      <div class="pf-panel" id="shared-list"></div>
+    </section>
+
+    <section id="stock" class="pf-section">
+      <h1>Stock</h1>
+      <div class="row g-2 mb-3" id="stock-stats"></div>
+      <div class="pf-panel">
+        <h2 class="h5">Add a medicine to stock</h2>
+        <form id="add-stock" class="row g-2 align-items-end">
+          <div class="col-md-5"><label class="form-label" for="add-med">Medicine</label>
+            <select class="form-select" id="add-med" name="medicine_id" required></select></div>
+          <div class="col-md-2"><label class="form-label" for="add-qty">Quantity</label>
+            <input class="form-control" id="add-qty" name="quantity" type="number" min="0" required></div>
+          <div class="col-md-2"><label class="form-label" for="add-price">Price (KES)</label>
+            <input class="form-control" id="add-price" name="price_kes" type="number" min="0.01" step="0.01" required></div>
+          <div class="col-md-3"><button class="btn btn-primary w-100">Add to stock</button></div>
+        </form>
+        <details class="mt-3"><summary>Medicine not in the list?</summary>
+          <form id="add-medicine" class="row g-2 align-items-end mt-1">
+            <div class="col-md-3"><label class="form-label" for="nm-brand">Brand name</label><input class="form-control" id="nm-brand" name="brand_name" required></div>
+            <div class="col-md-3"><label class="form-label" for="nm-generic">Generic name</label><input class="form-control" id="nm-generic" name="generic_name" required></div>
+            <div class="col-md-3"><label class="form-label" for="nm-form">Strength and form</label><input class="form-control" id="nm-form" name="strength_form" placeholder="500 mg tablet" required></div>
+            <div class="col-md-2 form-check ms-2 mb-2"><input class="form-check-input" type="checkbox" id="nm-rx" name="requires_prescription" checked>
+              <label class="form-check-label" for="nm-rx">Needs prescription</label></div>
+            <div class="col-12"><button class="btn btn-outline-primary">Add to catalogue</button></div>
+          </form></details>
+      </div>
+      <div class="pf-panel">
+        <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+          <h2 class="h5 mb-0">Current stock</h2>
+          <div class="d-flex gap-2"><input class="form-control form-control-sm" id="stock-filter" placeholder="Filter by name" aria-label="Filter stock">
+            <select class="form-select form-select-sm" id="stock-level" aria-label="Stock level"><option value="">All levels</option>
+              <option value="low">Low stock</option><option value="out">Out of stock</option></select></div>
+        </div>
+        <div class="table-responsive"><table class="table align-middle mb-0">
+          <thead><tr><th>Medicine</th><th>Quantity</th><th>Price (KES)</th><th>Updated</th><th></th></tr></thead>
+          <tbody id="stock-rows"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="history" class="pf-section">
+      <h1>Dispensed</h1>
+      <div class="pf-panel" id="history-list"></div>
+    </section>
+  </main>
+</div>
+<script src="/vendor/bootstrap.bundle.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/pharmacist.js"></script>
+</body>
+</html>
