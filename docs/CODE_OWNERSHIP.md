@@ -91,32 +91,29 @@ Each file in the repo has one owner. The owner commits it from their own GitHub 
 - `docs/screenshots/` (all files)
 - `public/vendor/` (all files)
 
-## How to commit (in this order)
+## How to review and commit your area
 
-The code is complete on `feature/full-implementation` (pull request #1). To give each member their own commits, we rebuild it on a new branch, one person at a time, **in the order of the table above** (database first, design last). Each person waits for the previous person to push.
+The full implementation is already on `main` (pull request #1, merged 30 October). Each member now reviews the files they own, learns how they work, and commits at least one real improvement from their own GitHub account.
 
-1. Download your package `PharmaFinder_<YourName>.zip` from the team chat.
-2. Run these commands in your clone of the repo:
+1. Update your clone and make a branch named after you:
 
 ```bash
-git fetch origin
-git checkout team-build 2>/dev/null || git checkout -b team-build origin/main   # Emmanuel creates it, others check it out
-git pull origin team-build                                                  # skip if you are first
+git checkout main
+git pull origin main
+git checkout -b review/<your-name>
 ```
 
-3. Unzip your package **into the root of the repo** so the folders line up (for example `pharmafinder/...` lands in `pharmafinder/`).
-4. Read every file you are adding. Run the app and the tests once the pieces you depend on are in.
-5. Commit and push:
+2. Read every file listed under your name above. Run the app and the tests for your area (see the README).
+3. Make at least one real improvement: comments explaining the tricky parts, a fix you found while reading, or an extra test.
+4. Commit and push from your own account:
 
 ```bash
 git add -A
-git commit -m "Add <your area>: <short description>"
-git push -u origin team-build
+git commit -m "Review <your area>: <what you changed>"
+git push -u origin review/<your-name>
 ```
 
-6. Tell the next person in the table it is their turn.
-
-After Ahmed's commit the branch is identical to pull request #1. Pauline then opens a pull request from `team-build` to `main`, everyone reviews, and pull request #1 is closed without merging.
+5. Open a pull request into `main`, ask one teammate to review it, and merge after their approval.
 
 ## Honesty note
 

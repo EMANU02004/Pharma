@@ -41,7 +41,7 @@ TRANSITION: "Here is what is actually built."
 SPEAKER: Pauline Miyienda (about 45 seconds)
 
 We are not finished, and this slide shows exactly where we are.
-Code for all eight features is on our feature branch and passes its automated tests, listed in the Tests column. Each of us is now committing, reviewing and learning the part we own, and nothing is merged into main yet.
+Code for all eight features is merged into our main branch and passes its automated tests, listed in the Tests column. Each of us is now reviewing and learning the part we own, and committing improvements from our own accounts.
 Deployment has not started; it is planned for the next two days, on slide 13.
 On the right are the scope changes the team agreed: we replaced the QR code with a short code, dropped reservations, payment and the digital signature, and instead of a doctor verification workflow, the admin creates doctor and pharmacist accounts, so nobody can sign up as a doctor.
 The screenshot is a real prescription issued in the app.
@@ -172,8 +172,8 @@ TRANSITION: "Ahmed will take us through next steps."
 SPEAKER: Ahmed Osman (about 30 seconds)
 
 We have a two-day plan to finish (read the table briefly, one line per person).
-Day 1: each of us commits the part we own and makes sure we can explain it and that its tests pass.
-Day 2: Emmanuel sets up the database on Aiven, Marion deploys to Vercel, Batsinda re-runs the Postman tests on the live site, and Pauline merges everything into main. Then we rehearse.
+Day 1: each of us reviews the part we own, runs its tests, and opens a pull request with at least one improvement, so we can explain every line we present.
+Day 2: Emmanuel sets up the database on Aiven, Marion deploys to Vercel, Batsinda re-runs the Postman tests on the live site, Ahmed builds the Figma file, and Pauline finalises the report. Then we rehearse.
 After that, the proposal's evaluation: a usability test with five users on a five-point Likert scale, and a pilot with real pharmacies.
 
 TRANSITION: "Pauline will close."
