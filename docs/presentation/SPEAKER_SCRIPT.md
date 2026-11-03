@@ -12,7 +12,7 @@ About 10 minutes of talk plus 3 minutes of questions. Each slide lists the speak
 | Ahmed Osman | 11, 13 |
 
 
-## Slide 1: 
+## Slide 1: PharmaFinder
 
 SPEAKER: Pauline Miyienda (about 30 seconds)
 
@@ -24,7 +24,7 @@ Introduce the team briefly: each of us will present the part we owned.
 TRANSITION: "Let me start with the problem we are solving."
 
 
-## Slide 2: 
+## Slide 2: PharmaFinder
 
 SPEAKER: Pauline Miyienda (about 45 seconds)
 
@@ -36,19 +36,20 @@ Our workflow addresses both in four steps (walk through the four rows). The key 
 TRANSITION: "Here is what is actually built."
 
 
-## Slide 3: 
+## Slide 3: PharmaFinder
 
 SPEAKER: Pauline Miyienda (about 45 seconds)
 
-Eight of our nine planned features work end to end, and each has automated tests listed in the Evidence column.
-Deployment to Vercel is ready (configuration and steps in the README) but not yet live, so we say so honestly.
+We are not finished, and this slide shows exactly where we are.
+Code for all eight features is on our feature branch and passes its automated tests, listed in the Tests column. Each of us is now committing, reviewing and learning the part we own, and nothing is merged into main yet.
+Deployment has not started; it is planned for the next two days, on slide 13.
 On the right are the scope changes the team agreed: we replaced the QR code with a short code, dropped reservations, payment and the digital signature, and instead of a doctor verification workflow, the admin creates doctor and pharmacist accounts, so nobody can sign up as a doctor.
 The screenshot is a real prescription issued in the app.
 
 TRANSITION: "Marion will explain the technology choices behind this."
 
 
-## Slide 4: 
+## Slide 4: PharmaFinder
 
 SPEAKER: Marion Gitau (about 45 seconds)
 
@@ -62,7 +63,7 @@ pytest and Postman for testing; GitHub for collaboration; Vercel for hosting, wi
 TRANSITION: "Here is how these pieces fit together."
 
 
-## Slide 5: 
+## Slide 5: PharmaFinder
 
 SPEAKER: Marion Gitau (about 45 seconds)
 
@@ -76,7 +77,7 @@ Because the API keeps no state in memory and writes nothing to disk, it runs on 
 TRANSITION: "Emmanuel will take you through the database."
 
 
-## Slide 6: 
+## Slide 6: PharmaFinder
 
 SPEAKER: Emmanuel Masambu (about 45 seconds)
 
@@ -90,7 +91,7 @@ CRUD: prescriptions and grants are never deleted, only their status changes, so 
 TRANSITION: "Batsinda will show the core code."
 
 
-## Slide 7: 
+## Slide 7: PharmaFinder
 
 SPEAKER: Batsinda Benoit (about 1 minute)
 
@@ -102,7 +103,7 @@ We tested exactly this: two pharmacists dispensing the same code at the same mom
 TRANSITION: "Sylvie will show how patients find their medicine."
 
 
-## Slide 8: 
+## Slide 8: PharmaFinder
 
 SPEAKER: Sylvie Uwera (about 45 seconds)
 
@@ -116,7 +117,7 @@ A test checks the search returns exactly the pharmacies with stock in the databa
 TRANSITION: "Batsinda will cover security."
 
 
-## Slide 9: 
+## Slide 9: PharmaFinder
 
 SPEAKER: Batsinda Benoit (about 45 seconds)
 
@@ -129,7 +130,7 @@ At the bottom, to be honest: our proposal promised encryption of stored data and
 TRANSITION: "Emmanuel will show how we tested all this."
 
 
-## Slide 10: 
+## Slide 10: PharmaFinder
 
 SPEAKER: Emmanuel Masambu (about 45 seconds)
 
@@ -142,7 +143,7 @@ The test report in the repo is generated from the actual run, not written by han
 TRANSITION: "Ahmed will talk about the challenges we hit."
 
 
-## Slide 11: 
+## Slide 11: PharmaFinder
 
 SPEAKER: Ahmed Osman (about 45 seconds)
 
@@ -155,7 +156,7 @@ Four: our own proposal's database was missing columns we needed, such as passwor
 TRANSITION: "Next, how review shaped the project."
 
 
-## Slide 12: 
+## Slide 12: PharmaFinder
 
 SPEAKER: Sylvie Uwera (about 30 seconds)
 
@@ -166,23 +167,23 @@ When we receive feedback from today's session, we will log each point on our boa
 TRANSITION: "Ahmed will take us through next steps."
 
 
-## Slide 13: 
+## Slide 13: PharmaFinder
 
 SPEAKER: Ahmed Osman (about 30 seconds)
 
-Each of us has a concrete next task (read the table briefly, one line per person).
-The biggest is deployment: Marion and Emmanuel will put the API on Vercel and the database on Aiven, and Batsinda will re-run the Postman tests against the live site.
-I will run a usability test with five users, using the five-point Likert scale from our evaluation plan.
-Milestones follow our proposal's timeline: live in week 5, evaluation in week 6, and a pilot with real pharmacies after the course.
+We have a two-day plan to finish (read the table briefly, one line per person).
+Day 1: each of us commits the part we own and makes sure we can explain it and that its tests pass.
+Day 2: Emmanuel sets up the database on Aiven, Marion deploys to Vercel, Batsinda re-runs the Postman tests on the live site, and Pauline merges everything into main. Then we rehearse.
+After that, the proposal's evaluation: a usability test with five users on a five-point Likert scale, and a pilot with real pharmacies.
 
 TRANSITION: "Pauline will close."
 
 
-## Slide 14: 
+## Slide 14: PharmaFinder
 
 SPEAKER: Pauline Miyienda (about 15 seconds)
 
-These are our main research sources and the open-source libraries we built on. We also used Claude as a development assistant, which was permitted for this project, and every result we have shown comes from running our own code and tests.
+These are our main research sources and the open-source libraries we built on. Every result we have shown comes from running our own code and tests.
 Thank you. We are happy to take your questions, and we can run a live demo if time allows.
 
 Q&A PREPARATION (3 minutes):
