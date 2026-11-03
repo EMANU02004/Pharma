@@ -120,4 +120,4 @@ After Ahmed's commit the branch is identical to pull request #1. Pauline then op
 
 ## Honesty note
 
-The code was written with AI assistance, which is permitted for this project and acknowledged on slide 14. Committing a file means you take ownership of it: read it, run it, and be ready to explain it. Do not claim in the teamwork report that you wrote it unaided.
+The code was written with AI assistance, which is permitted for this project. Committing a file means you take ownership of it: read it, run it, and be ready to explain it. Do not claim in the teamwork report that you wrote it unaided.
