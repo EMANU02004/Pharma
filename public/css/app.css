@@ -49,7 +49,6 @@ h3 { font-size: 1.05rem; }
 .pf-who strong { color: #fff; display: block; }
 .pf-who button { color: #fff; border-color: rgba(255,255,255,.5); }
 .pf-main { padding: 2rem clamp(1rem, 3vw, 2.5rem); max-width: 1200px; width: 100%; }
-.pf-demo { background: var(--pf-amber-soft); color: #6b4300; border-radius: 6px; padding: .4rem .75rem; font-size: .85rem; display: inline-block; margin-bottom: 1rem; }
 
 @media (max-width: 860px) {
   .pf-shell { grid-template-columns: 1fr; }

@@ -1,7 +1,7 @@
-"""Create the schema and load SYNTHETIC demo data for Uasin Gishu County.
+"""Create the schema and load sample data for Uasin Gishu County.
 
-Every person, pharmacy, licence number and stock level here is made up for
-demonstration. No real patient data is used.
+Every person here is made up for testing; no real patient data is used. The
+pharmacies are real, but their stock levels, prices and licence numbers are simulated.
 
 Usage:  python -m database.seed            (uses DB_* settings from .env)
 """
@@ -76,12 +76,13 @@ MEDICINES = [
     ("Zinc Tablets", "Zinc sulphate", "20 mg dispersible tablet", False, 6),
 ]
 
-# Fictional pharmacies at real Eldoret-area coordinates (approximate).
+# Real Eldoret pharmacies: names, locations and hours from Google Maps (Nov 2026).
+# Stock levels and prices below are SIMULATED; licence numbers are not verified.
 PHARMACIES = [
-    ("Eldoret Town Chemist", "PH-001", "Uganda Road, Eldoret CBD", 0.514300, 35.269800, "Daily", "07:30", "22:00"),
-    ("Kapsoya Pharmacy", "PH-002", "Kapsoya Estate, Eldoret", 0.531000, 35.300500, "Mon-Sat", "08:00", "20:00"),
-    ("Langas Pharmacy", "PH-003", "Langas, Kapseret", 0.485000, 35.270000, "Mon-Sat", "08:00", "19:00"),
-    ("Pioneer Chemist", "PH-004", "Pioneer, Eldoret", 0.532000, 35.285000, "Mon-Fri,Sun", "09:00", "18:00"),
+    ("Eldobase Chemists Ltd", "UNVERIFIED-001", "Maraba Building, Ronald Ngala St, Eldoret CBD", 0.515333, 35.276803, "Mon-Sat", "08:00", "20:00"),
+    ("Dr. Jim Chemist Ltd", "UNVERIFIED-002", "64 Arcade, Oloo Street, Eldoret CBD", 0.516311, 35.273803, "Mon-Fri", "07:30", "20:00"),
+    ("Keripharm Chemist", "UNVERIFIED-003", "Ndalat Rd, Langas, Kapseret", 0.510849, 35.259356, "Mon-Sat", "07:00", "21:00"),
+    ("Pioneer Meds", "UNVERIFIED-004", "Pioneer, Eldoret", 0.505825, 35.270470, "Daily", "07:00", "21:30"),
 ]
 
 DOCTORS = [
@@ -97,7 +98,7 @@ PHARMACISTS = [
     ("Grace Jebet", "grace.jebet", 1, "PS-2001"),
     ("Peter Kibet", "peter.kibet", 2, "PS-2002"),
     ("Lucy Achieng", "lucy.achieng", 3, "PS-2003"),
-    ("Daniel Rotich", "daniel.rotich", 4, "-PS-2004"),
+    ("Daniel Rotich", "daniel.rotich", 4, "PS-2004"),
 ]
 
 PATIENT_NAMES = [
@@ -191,7 +192,7 @@ def seed(cur, password=PASSWORD, with_sample_prescriptions=True):
             (2, 0, [(11, "1 tablet", "Once daily", 30, 30)], "active"),
         ]
         for idx, (p_i, d_i, items, status) in enumerate(samples):
-            code = ["PF7K-AAA2", "PF7K-BBB3", "PF7K-CCC4"][idx]  # fixed codes for the demo script
+            code = ["PF7K-AAA2", "PF7K-BBB3", "PF7K-CCC4"][idx]  # fixed codes for the walkthrough script
             cur.execute("""INSERT INTO prescriptions (code, patient_id, doctor_id, issue_date, expiry_date, status)
                            VALUES (%s,%s,%s,%s,%s,%s)""",
                         (code, patient_ids[p_i], doctor_ids[d_i], today, today + timedelta(days=30), status))
@@ -215,7 +216,7 @@ def main():
     print(f"Database '{Config.DB_NAME}' created and seeded with data.")
     print(f"All accounts use the password: {PASSWORD}")
     print("  admin@pharmafinder.test | faith.chebet@pharmafinder.test (doctor)")
-    print("  grace.jebet@.pharmafinder.test (pharmacist) | aline.chepkoech@pharmafinder.test (patient)")
+    print("  grace.jebet@pharmafinder.test (pharmacist) | aline.chepkoech@pharmafinder.test (patient)")
 
 
 if __name__ == "__main__":

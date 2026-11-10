@@ -28,7 +28,6 @@
 
   <section class="pf-auth-form">
     <div>
-      <span class="pf-demo">Demo build with synthetic data for Uasin Gishu County</span>
       <ul class="nav nav-underline mb-4" role="tablist">
         <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#login-pane" type="button" role="tab">Log in</button></li>
         <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#register-pane" type="button" role="tab">Create patient account</button></li>
@@ -44,13 +43,13 @@
             <button class="btn btn-primary w-100" type="submit">Log in</button>
           </form>
           <details class="mt-4 small text-muted">
-            <summary>Demo accounts</summary>
+            <summary>Test accounts</summary>
             <p class="mt-2 mb-1">Password for all: <code>Pharma2026</code></p>
             <ul class="mb-0">
-              <li>Patient: aline.chepkoech@demo.pharmafinder.test</li>
-              <li>Doctor: faith.chebet@demo.pharmafinder.test</li>
-              <li>Pharmacist: grace.jebet@demo.pharmafinder.test</li>
-              <li>Admin: admin@demo.pharmafinder.test</li>
+              <li>Patient: aline.chepkoech@pharmafinder.test</li>
+              <li>Doctor: faith.chebet@pharmafinder.test</li>
+              <li>Pharmacist: grace.jebet@pharmafinder.test</li>
+              <li>Admin: admin@pharmafinder.test</li>
             </ul>
           </details>
         </div>
@@ -107,6 +106,12 @@
       await PF.api("/api/auth/register", { method: "POST", body });
       go("patient");
     } catch (err) { out.textContent = err.message; PF.formErrors(f, err); }
+  });
+
+  // Clear a stale error as soon as the user edits a field.
+  document.getElementById("register-form").addEventListener("input", (e) => {
+    e.target.classList.remove("is-invalid");
+    document.getElementById("register-error").textContent = "";
   });
 </script>
 </body>
