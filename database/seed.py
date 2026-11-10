@@ -19,7 +19,7 @@ load_dotenv()
 from pharmafinder.config import Config  # noqa: E402
 from werkzeug.security import generate_password_hash  # noqa: E402
 
-DEMO_PASSWORD = os.environ.get("DEMO_PASSWORD", "Pharma2026")
+PASSWORD = os.environ.get("PASSWORD", "Pharma2026")
 SCHEMA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "schema.sql")
 
 # (brand, generic, strength/form, requires prescription, typical unit price KES)
@@ -78,26 +78,26 @@ MEDICINES = [
 
 # Fictional pharmacies at real Eldoret-area coordinates (approximate).
 PHARMACIES = [
-    ("Eldoret Town Demo Chemist", "DEMO-PH-001", "Uganda Road, Eldoret CBD (demo)", 0.514300, 35.269800, "Daily", "07:30", "22:00"),
-    ("Kapsoya Demo Pharmacy", "DEMO-PH-002", "Kapsoya Estate, Eldoret (demo)", 0.531000, 35.300500, "Mon-Sat", "08:00", "20:00"),
-    ("Langas Demo Pharmacy", "DEMO-PH-003", "Langas, Kapseret (demo)", 0.485000, 35.270000, "Mon-Sat", "08:00", "19:00"),
-    ("Pioneer Demo Chemist", "DEMO-PH-004", "Pioneer, Eldoret (demo)", 0.532000, 35.285000, "Mon-Fri,Sun", "09:00", "18:00"),
+    ("Eldoret Town Chemist", "PH-001", "Uganda Road, Eldoret CBD", 0.514300, 35.269800, "Daily", "07:30", "22:00"),
+    ("Kapsoya Pharmacy", "PH-002", "Kapsoya Estate, Eldoret", 0.531000, 35.300500, "Mon-Sat", "08:00", "20:00"),
+    ("Langas Pharmacy", "PH-003", "Langas, Kapseret", 0.485000, 35.270000, "Mon-Sat", "08:00", "19:00"),
+    ("Pioneer Chemist", "PH-004", "Pioneer, Eldoret", 0.532000, 35.285000, "Mon-Fri,Sun", "09:00", "18:00"),
 ]
 
 DOCTORS = [
-    ("Dr. Faith Chebet", "faith.chebet", "DEMO-MD-1001", "General Practice", "Eldoret Demo Health Centre"),
-    ("Dr. Kevin Kiprono", "kevin.kiprono", "DEMO-MD-1002", "Internal Medicine", "Eldoret Demo Hospital"),
-    ("Dr. Mercy Jepkosgei", "mercy.jepkosgei", "DEMO-MD-1003", "Paediatrics", "Eldoret Demo Hospital"),
-    ("Dr. Brian Otieno", "brian.otieno", "DEMO-MD-1004", "Family Medicine", "Kapseret Demo Clinic"),
-    ("Dr. Esther Wanjiru", "esther.wanjiru", "DEMO-MD-1005", "Diabetes & Endocrinology", "Eldoret Demo Hospital"),
-    ("Dr. Samuel Kipkemboi", "samuel.kipkemboi", "DEMO-MD-1006", "General Practice", "Turbo Demo Dispensary"),
+    ("Dr. Faith Chebet", "faith.chebet", "MD-1001", "General Practice", "Eldoret Health Centre"),
+    ("Dr. Kevin Kiprono", "kevin.kiprono", "MD-1002", "Internal Medicine", "Eldoret Hospital"),
+    ("Dr. Mercy Jepkosgei", "mercy.jepkosgei", "MD-1003", "Paediatrics", "Eldoret Hospital"),
+    ("Dr. Brian Otieno", "brian.otieno", "MD-1004", "Family Medicine", "Kapseret Clinic"),
+    ("Dr. Esther Wanjiru", "esther.wanjiru", "MD-1005", "Diabetes & Endocrinology", "Eldoret Hospital"),
+    ("Dr. Samuel Kipkemboi", "samuel.kipkemboi", "MD-1006", "General Practice", "Turbo Dispensary"),
 ]
 
 PHARMACISTS = [
-    ("Grace Jebet", "grace.jebet", 1, "DEMO-PS-2001"),
-    ("Peter Kibet", "peter.kibet", 2, "DEMO-PS-2002"),
-    ("Lucy Achieng", "lucy.achieng", 3, "DEMO-PS-2003"),
-    ("Daniel Rotich", "daniel.rotich", 4, "DEMO-PS-2004"),
+    ("Grace Jebet", "grace.jebet", 1, "PS-2001"),
+    ("Peter Kibet", "peter.kibet", 2, "PS-2002"),
+    ("Lucy Achieng", "lucy.achieng", 3, "PS-2003"),
+    ("Daniel Rotich", "daniel.rotich", 4, "-PS-2004"),
 ]
 
 PATIENT_NAMES = [
@@ -130,7 +130,7 @@ def run_schema(cur):
             cur.execute(stmt)
 
 
-def seed(cur, password=DEMO_PASSWORD, with_sample_prescriptions=True):
+def seed(cur, password=PASSWORD, with_sample_prescriptions=True):
     rng = random.Random(42)
     pw = generate_password_hash(password)
 
@@ -139,7 +139,7 @@ def seed(cur, password=DEMO_PASSWORD, with_sample_prescriptions=True):
                     (name, email, phone, pw, role))
         return cur.lastrowid
 
-    user("System Administrator", "admin@demo.pharmafinder.test", "admin", "0700000001")
+    user("System Administrator", "admin@pharmafinder.test", "admin", "0700000001")
 
     for p in PHARMACIES:
         cur.execute("""INSERT INTO pharmacies (name, license_number, address, latitude, longitude,
@@ -147,20 +147,20 @@ def seed(cur, password=DEMO_PASSWORD, with_sample_prescriptions=True):
 
     doctor_ids = []
     for i, (name, handle, lic, spec, facility) in enumerate(DOCTORS):
-        uid = user(name, f"{handle}@demo.pharmafinder.test", "doctor", f"07110000{i:02d}")
+        uid = user(name, f"{handle}@pharmafinder.test", "doctor", f"07110000{i:02d}")
         cur.execute("INSERT INTO doctors (user_id, license_number, speciality, facility) VALUES (%s,%s,%s,%s)",
                     (uid, lic, spec, facility))
         doctor_ids.append(cur.lastrowid)
 
     for i, (name, handle, pharmacy_id, lic) in enumerate(PHARMACISTS):
-        uid = user(name, f"{handle}@demo.pharmafinder.test", "pharmacist", f"07220000{i:02d}")
+        uid = user(name, f"{handle}@pharmafinder.test", "pharmacist", f"07220000{i:02d}")
         cur.execute("INSERT INTO pharmacists (user_id, pharmacy_id, license_number) VALUES (%s,%s,%s)",
                     (uid, pharmacy_id, lic))
 
     patient_ids = []
     for i, name in enumerate(PATIENT_NAMES):
         handle = name.lower().replace(" ", ".")
-        uid = user(name, f"{handle}@demo.pharmafinder.test", "patient", f"07330000{i:02d}")
+        uid = user(name, f"{handle}@pharmafinder.test", "patient", f"07330000{i:02d}")
         dob = f"{rng.randint(1950, 2004)}-{rng.randint(1, 12):02d}-{rng.randint(1, 28):02d}"
         cur.execute("INSERT INTO patients (user_id, date_of_birth, sub_county) VALUES (%s,%s,%s)",
                     (uid, dob, SUB_COUNTIES[i % len(SUB_COUNTIES)]))
@@ -212,10 +212,10 @@ def main():
         run_schema(cur)
         seed(cur)
     conn.close()
-    print(f"Database '{Config.DB_NAME}' created and seeded with demo data.")
-    print(f"All demo accounts use the password: {DEMO_PASSWORD}")
-    print("  admin@demo.pharmafinder.test | faith.chebet@demo.pharmafinder.test (doctor)")
-    print("  grace.jebet@demo.pharmafinder.test (pharmacist) | aline.chepkoech@demo.pharmafinder.test (patient)")
+    print(f"Database '{Config.DB_NAME}' created and seeded with data.")
+    print(f"All accounts use the password: {PASSWORD}")
+    print("  admin@pharmafinder.test | faith.chebet@pharmafinder.test (doctor)")
+    print("  grace.jebet@.pharmafinder.test (pharmacist) | aline.chepkoech@pharmafinder.test (patient)")
 
 
 if __name__ == "__main__":
