@@ -8,7 +8,8 @@ pharmacies that have every medicine in stock (with price, distance and opening h
 prescription with one pharmacy for a limited time. The pharmacist checks the code, dispenses, and stock falls
 automatically. A prescription can be filled only once, and every sensitive action is recorded in an audit log.
 
-> **Demo data only.** Every person, pharmacy, licence number and stock level in the seed data is fictional.
+> **Sample data.** The four pharmacies are real Eldoret pharmacies (names, locations and opening hours from Google Maps),
+> but their stock levels and prices are simulated and their licence numbers are not verified. Every person in the seed data is fictional.
 
 ## Features
 
@@ -47,7 +48,7 @@ pharmafinder/           Flask application
   routes/               auth, doctor, patient, search, pharmacy, admin
 public/                 Frontend (HTML pages, css/, js/, vendor/)
 database/schema.sql     MySQL schema (12 tables)
-database/seed.py        Creates the schema and loads demo data
+database/seed.py        Creates the schema and loads sample data
 tests/                  pytest suite (66 tests)
 postman/                Postman collection
 docs/                   API reference, architecture diagrams, ERD, test report, deviations
@@ -75,27 +76,27 @@ GRANT ALL PRIVILEGES ON pharmafinder.* TO 'pharma'@'localhost';
 GRANT ALL PRIVILEGES ON pharmafinder_test.* TO 'pharma'@'localhost';
 ```
 
-Create the tables and load the demo data, then start the app:
+Create the tables and load the sample data, then start the app:
 
 ```bash
 python -m database.seed     # drops and recreates all tables
 python app.py               # http://localhost:5000
 ```
 
-### Demo accounts (password `Pharma2026` for all)
+### Test accounts (password `Pharma2026` for all)
 
 | Role | Email |
 |---|---|
-| Patient | aline.chepkoech@demo.pharmafinder.test (also 24 other patients) |
-| Doctor | faith.chebet@demo.pharmafinder.test |
-| Pharmacist (Eldoret Town Demo Chemist) | grace.jebet@demo.pharmafinder.test |
-| Pharmacist (Kapsoya / Langas / Pioneer) | peter.kibet@, lucy.achieng@, daniel.rotich@demo.pharmafinder.test |
-| Admin | admin@demo.pharmafinder.test |
+| Patient | aline.chepkoech@pharmafinder.test (also 24 other patients) |
+| Doctor | faith.chebet@pharmafinder.test |
+| Pharmacist (Eldobase Chemists) | grace.jebet@pharmafinder.test |
+| Pharmacist (Dr. Jim / Keripharm / Pioneer Meds) | peter.kibet@, lucy.achieng@, daniel.rotich@pharmafinder.test |
+| Admin | admin@pharmafinder.test |
 
 The seed includes 4 pharmacies, 25 patients, 6 doctors, 50 medicines and 3 sample prescriptions
 (codes `PF7K-AAA2`, `PF7K-BBB3`, `PF7K-CCC4`).
 
-### Demo script
+### Walkthrough script
 
 1. Log in as the doctor, search "Aline", add two medicines and issue the prescription. Note the code.
 2. Log in as Aline. The prescription and the alert appear. Click **Find pharmacies with this**: pharmacies

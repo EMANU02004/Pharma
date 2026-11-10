@@ -111,7 +111,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"faith.chebet@demo.pharmafinder.test\",\n  \"password\": \"{{password}}\"\n}"
+          "raw": "{\n  \"email\": \"faith.chebet@pharmafinder.test\",\n  \"password\": \"{{password}}\"\n}"
         }
       },
       "event": [
@@ -287,7 +287,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"aline.chepkoech@demo.pharmafinder.test\",\n  \"password\": \"{{password}}\"\n}"
+          "raw": "{\n  \"email\": \"aline.chepkoech@pharmafinder.test\",\n  \"password\": \"{{password}}\"\n}"
         }
       },
       "event": [
@@ -566,7 +566,7 @@
             "type": "text/javascript",
             "exec": [
               "const emails = {1:\"grace.jebet\",2:\"peter.kibet\",3:\"lucy.achieng\",4:\"daniel.rotich\"};",
-              "pm.collectionVariables.set(\"pharmacistEmail\", emails[pm.collectionVariables.get(\"pharmacyId\")] + \"@demo.pharmafinder.test\");"
+              "pm.collectionVariables.set(\"pharmacistEmail\", emails[pm.collectionVariables.get(\"pharmacyId\")] + \"@pharmafinder.test\");"
             ]
           }
         }
@@ -779,7 +779,7 @@
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"admin@demo.pharmafinder.test\",\n  \"password\": \"{{password}}\"\n}"
+          "raw": "{\n  \"email\": \"admin@pharmafinder.test\",\n  \"password\": \"{{password}}\"\n}"
         }
       },
       "event": [

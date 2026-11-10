@@ -7,7 +7,7 @@
   let prescriptions = [];
   let pharmacies = [];
   let map, markerLayer, youMarker;
-  let here = PF.DEMO_LOCATION;
+  let here = PF.DEFAULT_LOCATION;
   const shareModal = new bootstrap.Modal(document.getElementById("share-modal"));
 
   PF.sections((name) => {
@@ -100,7 +100,7 @@
   function initMap() {
     if (map) return;
     map = L.map("map").setView([here.lat, here.lng], 13);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" }).addTo(map);
     markerLayer = L.layerGroup().addTo(map);
     showPharmacies();
@@ -170,14 +170,29 @@
     if (id) searchByPrescription(id);
   });
 
+  // Re-run the search as soon as a sort or filter changes.
+  document.getElementById("rx-sort").addEventListener("change", () => {
+    const id = document.getElementById("rx-pick").value;
+    if (id) searchByPrescription(id);
+  });
+  ["sort", "max_km", "open_now"].forEach((id) => document.getElementById(id).addEventListener("change", () => {
+    if (document.getElementById("q").value.trim().length >= 2) document.getElementById("search-form").requestSubmit();
+  }));
+
   async function searchByPrescription(rxId) {
     const box = document.getElementById("results");
     try {
       const data = await api(`/api/patient/prescriptions/${rxId}/pharmacies?lat=${here.lat}&lng=${here.lng}`);
       initMap();
+      const sort = document.getElementById("rx-sort").value;
+      if (sort === "distance") data.results.sort((x, y) => (x.distance_km ?? 1e9) - (y.distance_km ?? 1e9));
+      if (sort === "price") data.results.sort((x, y) => (y.can_fill_all - x.can_fill_all) ||
+        ((x.total_price_kes ?? 1e9) - (y.total_price_kes ?? 1e9)));
+      const order = { best: "Pharmacies that can supply every medicine are listed first, nearest first.",
+        distance: "Nearest pharmacies first.", price: "Pharmacies with everything first, cheapest total first." }[sort];
       box.innerHTML = `<h2 class="h5">Pharmacies for ${esc(data.code)}</h2>
-        <p class="small text-muted">Pharmacies that can supply every medicine are listed first, nearest first.</p>` +
-        data.results.map((r, i) => `<div class="pf-result ${i === 0 && r.can_fill_all ? "is-best" : ""}"><div>
+        <p class="small text-muted">${order}</p>` +
+        data.results.map((r, i) => `<div class="pf-result ${i === 0 && r.can_fill_all && sort === "best" ? "is-best" : ""}"><div>
           <strong>${esc(r.name)}</strong>
           <div class="small">${r.can_fill_all ? "Has everything on your prescription" : `Has ${r.items_available} of ${r.items_needed} medicines`}</div>
           <ul class="small mb-1 ps-3">${r.lines.map((l) => `<li>${esc(l.brand_name)}: ${l.enough ? `<span class="stock-ok">enough</span> at ${kes(l.unit_price_kes)} each` : `<span class="stock-out">${l.in_stock ? `only ${l.in_stock}` : "none"}</span>`}</li>`).join("")}</ul>

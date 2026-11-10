@@ -3,7 +3,7 @@ from conftest import DOCTOR, PATIENT, PHARMACIST, ensure_stock
 
 
 def test_admin_creates_pharmacy_and_staff_who_can_log_in(login, client):
-    admin = login("admin@demo.pharmafinder.test")
+    admin = login("admin@pharmafinder.test")
     ph = admin.post("/api/admin/pharmacies", json={
         "name": "Moiben Test Pharmacy", "license_number": "TEST-PH-9", "address": "Moiben",
         "latitude": 0.8100, "longitude": 35.3800, "open_days": "Mon-Sat", "opens_at": "08:00", "closes_at": "19:00"})
@@ -20,9 +20,9 @@ def test_admin_creates_pharmacy_and_staff_who_can_log_in(login, client):
 
 
 def test_admin_input_validation_and_duplicates(login):
-    admin = login("admin@demo.pharmafinder.test")
+    admin = login("admin@pharmafinder.test")
     assert admin.post("/api/admin/doctors", json={"full_name": "X", "email": "x@example.com", "password": "Pharma2026",
-                                                  "license_number": "DEMO-MD-1001"}).status_code == 409
+                                                  "license_number": "MD-1001"}).status_code == 409
     assert admin.post("/api/admin/pharmacies", json={"name": "Bad", "license_number": "B-1", "address": "x",
                                                      "latitude": 200, "longitude": 35}).status_code == 422
     assert admin.post("/api/admin/pharmacies", json={"name": "Bad", "license_number": "B-2", "address": "x",
@@ -30,7 +30,7 @@ def test_admin_input_validation_and_duplicates(login):
 
 
 def test_audit_log_lists_actions(login):
-    admin = login("admin@demo.pharmafinder.test")
+    admin = login("admin@pharmafinder.test")
     data = admin.get("/api/admin/audit").get_json()
     assert "LOGIN" in data["actions"]
     assert data["entries"][0]["created_at"] is not None

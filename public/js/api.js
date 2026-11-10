@@ -98,16 +98,16 @@ const PF = (() => {
     Object.keys(err.fields || {}).forEach((name) => form.querySelector(`[name="${name}"]`)?.classList.add("is-invalid"));
   }
 
-  // Patient location: the browser's geolocation, or Eldoret CBD for the demo.
-  const DEMO_LOCATION = { lat: 0.5143, lng: 35.2698, label: "Eldoret CBD (demo location)" };
+  // Patient location: the browser's geolocation, or Eldoret CBD as the default.
+  const DEFAULT_LOCATION = { lat: 0.5143, lng: 35.2698, label: "Eldoret CBD (default location)" };
   function locate() {
     return new Promise((resolve) => {
-      if (!navigator.geolocation) return resolve(DEMO_LOCATION);
+      if (!navigator.geolocation) return resolve(DEFAULT_LOCATION);
       navigator.geolocation.getCurrentPosition(
         (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude, label: "Your location" }),
-        () => resolve(DEMO_LOCATION), { timeout: 6000, maximumAge: 300000 });
+        () => resolve(DEFAULT_LOCATION), { timeout: 6000, maximumAge: 300000 });
     });
   }
 
-  return { api, esc, toast, requireRole, sections, statusBadge, stockLabel, kes, itemsList, formErrors, locate, DEMO_LOCATION };
+  return { api, esc, toast, requireRole, sections, statusBadge, stockLabel, kes, itemsList, formErrors, locate, DEFAULT_LOCATION };
 })();

@@ -18,13 +18,13 @@ from pharmafinder.config import Config  # noqa: E402
 TEST_DB = os.environ.get("TEST_DB_NAME", Config.DB_NAME + "_test")
 PASSWORD = "Pharma2026"
 
-ADMIN = "admin@demo.pharmafinder.test"
-DOCTOR = "faith.chebet@demo.pharmafinder.test"
-DOCTOR2 = "kevin.kiprono@demo.pharmafinder.test"
-PHARMACIST = "grace.jebet@demo.pharmafinder.test"      # pharmacy 1
-PHARMACIST2 = "peter.kibet@demo.pharmafinder.test"     # pharmacy 2
-PATIENT = "aline.chepkoech@demo.pharmafinder.test"     # patient 1
-PATIENT2 = "john.kiptoo@demo.pharmafinder.test"        # patient 2
+ADMIN = "admin@pharmafinder.test"
+DOCTOR = "faith.chebet@pharmafinder.test"
+DOCTOR2 = "kevin.kiprono@pharmafinder.test"
+PHARMACIST = "grace.jebet@pharmafinder.test"      # pharmacy 1
+PHARMACIST2 = "peter.kibet@pharmafinder.test"     # pharmacy 2
+PATIENT = "aline.chepkoech@pharmafinder.test"     # patient 1
+PATIENT2 = "john.kiptoo@pharmafinder.test"        # patient 2
 
 
 def _rebuild():
